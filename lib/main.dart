@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
-import 'login.dart';
+import 'package:bitponic/src/screen/login.dart';
 
-void main() => runApp(BitponicApp());
-
+void main() => runApp(MaterialApp(
+      home: BitponicApp(),
+      debugShowCheckedModeBanner: false,
+    ));
+    
 class BitponicApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'Widgets/FormCard.dart';
-
-void main() => runApp(MaterialApp(
-      home: Login(),
-      debugShowCheckedModeBanner: false,
-    ));
+//import 'package:bitponic/src/widgets/form_card.dart';
+import 'package:bitponic/src/validation/login_validation.dart';
 
 class Login extends StatefulWidget {
   @override
   _LoginState createState() => _LoginState();
 }
 
-class _LoginState extends State<Login> {
+class _LoginState extends State<Login> with Validation {
   bool _isSelected = false;
+  final formKey = GlobalKey<FormState>();
+
+  String email = '';
+  String password = '';
 
   void _radio() {
     setState(() {
@@ -49,7 +49,8 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     ScreenUtil.instance = ScreenUtil.getInstance()..init(context);
-    ScreenUtil.instance = ScreenUtil(width: 750, height: 1334, allowFontScaling: true);
+    ScreenUtil.instance =
+        ScreenUtil(width: 750, height: 1334, allowFontScaling: true);
     return new Scaffold(
       backgroundColor: Colors.white,
       resizeToAvoidBottomPadding: true,
@@ -89,7 +90,77 @@ class _LoginState extends State<Login> {
               SizedBox(
                 height: ScreenUtil.getInstance().setHeight(40),
               ),
-              FormCard(),
+              Container(
+                width: double.infinity,
+                height: ScreenUtil.getInstance().setHeight(500),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8.0),
+                    boxShadow: [
+                      BoxShadow(
+                          color: Colors.black12,
+                          offset: Offset(0.0, 15.0),
+                          blurRadius: 15.0),
+                      BoxShadow(
+                          color: Colors.black12,
+                          offset: Offset(0.0, -10.0),
+                          blurRadius: 10.0),
+                    ]),
+                child: Form(
+                  key: formKey,
+                  child: Padding(
+                    padding:
+                        EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text("Login",
+                            style: TextStyle(
+                                fontSize: ScreenUtil.getInstance().setSp(45),
+                                fontFamily: "Poppins-Bold",
+                                letterSpacing: .6)),
+                        SizedBox(
+                          height: ScreenUtil.getInstance().setHeight(35),
+                        ),
+                        Text("Email",
+                            style: TextStyle(
+                                fontFamily: "Poppins-Medium",
+                                fontSize: ScreenUtil.getInstance().setSp(26))),
+                        TextFormField(
+                          keyboardType: TextInputType.emailAddress,
+                          decoration: InputDecoration(
+                              hintText: "Email",
+                              hintStyle: TextStyle(
+                                  color: Colors.grey, fontSize: 12.0)),
+                          validator: validateEmail,
+                          onSaved: (String value) {
+                            email = value;
+                          },
+                        ),
+                        SizedBox(
+                          height: ScreenUtil.getInstance().setHeight(30),
+                        ),
+                        Text("Password",
+                            style: TextStyle(
+                                fontFamily: "Poppins-Medium",
+                                fontSize: ScreenUtil.getInstance().setSp(26))),
+                        TextFormField(
+                          obscureText: true,
+                          decoration: InputDecoration(
+                            hintText: "Password",
+                            hintStyle:
+                                TextStyle(color: Colors.grey, fontSize: 12.0)
+                          ),
+                          validator: validatePassword,
+                          onSaved: (String value) {
+                            password = value;
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
               SizedBox(height: ScreenUtil.getInstance().setHeight(40)),
               Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -128,7 +199,13 @@ class _LoginState extends State<Login> {
                         child: Material(
                           color: Colors.transparent,
                           child: InkWell(
-                            onTap: () {},
+                            onTap: () {
+                              if (formKey.currentState.validate()) {
+                                formKey.currentState.save();
+                                print('Email: $email');
+                                print('Password: $password');
+                              }
+                            },
                             child: Center(
                               child: Text("MASUK",
                                   style: TextStyle(

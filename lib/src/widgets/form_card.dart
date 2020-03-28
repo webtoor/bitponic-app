@@ -1,7 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:bitponic/src/validation/login_validation.dart';
 
-class FormCard extends StatelessWidget {
+class FormCard extends StatefulWidget {
+  @override
+  _FormCardState createState() => _FormCardState();
+}
+
+class _FormCardState extends State<FormCard> with Validation {
+  final formKey = GlobalKey<FormState>();
+
+  String email = '';
+  String password = '';
+
   @override
   Widget build(BuildContext context) {
     return new Container(
@@ -20,6 +31,9 @@ class FormCard extends StatelessWidget {
                 offset: Offset(0.0, -10.0),
                 blurRadius: 10.0),
           ]),
+    child: Form(
+
+      key: formKey,
       child: Padding(
         padding: EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
         child: Column(
@@ -37,10 +51,15 @@ class FormCard extends StatelessWidget {
                 style: TextStyle(
                     fontFamily: "Poppins-Medium",
                     fontSize: ScreenUtil.getInstance().setSp(26))),
-            TextField(
+            TextFormField(
+              keyboardType: TextInputType.emailAddress,
               decoration: InputDecoration(
-                  hintText: "username",
+                  hintText: "Email",
                   hintStyle: TextStyle(color: Colors.grey, fontSize: 12.0)),
+              validator: validateEmail,
+              onSaved: (String value) {
+                email = value;
+              },
             ),
             SizedBox(
               height: ScreenUtil.getInstance().setHeight(30),
@@ -49,11 +68,15 @@ class FormCard extends StatelessWidget {
                 style: TextStyle(
                     fontFamily: "Poppins-Medium",
                     fontSize: ScreenUtil.getInstance().setSp(26))),
-            TextField(
+            TextFormField(
               obscureText: true,
               decoration: InputDecoration(
                   hintText: "Password",
                   hintStyle: TextStyle(color: Colors.grey, fontSize: 12.0)),
+              validator: validatePassword,
+              onSaved: (String value) {
+                password = value;
+              },
             ),
             SizedBox(
               height: ScreenUtil.getInstance().setHeight(35),
@@ -73,6 +96,7 @@ class FormCard extends StatelessWidget {
           ],
         ),
       ),
+    ),
     );
   }
 }
