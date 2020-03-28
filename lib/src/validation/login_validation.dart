@@ -2,14 +2,14 @@ class Validation {
 
   String validatePassword(String value) { 
     if (value.length < 4) { 
-      return 'Password Minimal 4 Karakter'; 
+      return 'Password minimal 4 karakter'; 
     }
     return null; 
   }
 
   String validateEmail(String value) {
     if (!value.contains('@')) { 
-      return 'Email tidak valid'; 
+      return 'Format email tidak valid'; 
     }
     return null;
   }

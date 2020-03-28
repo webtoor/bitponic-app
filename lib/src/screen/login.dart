@@ -15,6 +15,8 @@ class _LoginState extends State<Login> with Validation {
   bool _isSelected = false;
   final LocalStorage storage = new LocalStorage('user_app');
   final formKey = GlobalKey<FormState>();
+  final GlobalKey<ScaffoldState> _scaffoldkey = new GlobalKey<ScaffoldState>();
+
 
   String email = '';
   String password = '';
@@ -29,14 +31,17 @@ class _LoginState extends State<Login> with Validation {
     if (this.formKey.currentState.validate()) {
       formKey.currentState.save();
 
-      print('Printing the login data.');
+      /* print('Printing the login data.');
       print('Email : $email');
-      print('Password : $password');
+      print('Password : $password'); */
+
+      this.postLogin();
+
     }
   }
 
   void postLogin() {
-    var url = "http://192.168.43.54:8000/login_user";
+    var url = "http://192.168.1.4:8000/api/v1/login";
     var body = json.encode({
       "email": '$email',
       "password": '$password',
@@ -58,17 +63,18 @@ class _LoginState extends State<Login> with Validation {
         //this.home();
       } else if (extractdata['error'] != null) {
         //print(extractdata['error']);
-        showDialog(
-            context: context,
-            builder: (context) {
-              return new SimpleDialog(children: <Widget>[
-                new Center(
-                    child: new Container(
-                        child: new Text('Email/Password tidak sesuai!!')))
-              ]);
-            });
+          showSnackBar();
       }
     });
+  }
+
+   void showSnackBar() {
+    final snackBarContent = SnackBar(
+      content: Text('Anda memasukkan Username/Email dan Password yang salah. Isi dengan data yang benar dan coba lagi'),
+      action: SnackBarAction(
+          label: 'OK', onPressed: _scaffoldkey.currentState.hideCurrentSnackBar),
+    );
+    _scaffoldkey.currentState.showSnackBar(snackBarContent);
   }
 
   Widget radioButton(bool isSelected) => Container(
@@ -96,12 +102,14 @@ class _LoginState extends State<Login> with Validation {
           color: Colors.black26.withOpacity(.2),
         ),
       );
+      
   @override
   Widget build(BuildContext context) {
     ScreenUtil.instance = ScreenUtil.getInstance()..init(context);
     ScreenUtil.instance =
         ScreenUtil(width: 750, height: 1334, allowFontScaling: true);
     return new Scaffold(
+      key : _scaffoldkey,
       backgroundColor: Colors.white,
       resizeToAvoidBottomPadding: true,
       body: Stack(fit: StackFit.expand, children: <Widget>[
