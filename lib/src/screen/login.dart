@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 //import 'package:bitponic/src/widgets/form_card.dart';
 import 'package:bitponic/src/validation/login_validation.dart';
+import 'package:localstorage/localstorage.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class Login extends StatefulWidget {
   @override
@@ -10,6 +13,7 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> with Validation {
   bool _isSelected = false;
+  final LocalStorage storage = new LocalStorage('user_app');
   final formKey = GlobalKey<FormState>();
 
   String email = '';
@@ -18,6 +22,52 @@ class _LoginState extends State<Login> with Validation {
   void _radio() {
     setState(() {
       _isSelected = !_isSelected;
+    });
+  }
+
+  void submit() {
+    if (this.formKey.currentState.validate()) {
+      formKey.currentState.save();
+
+      print('Printing the login data.');
+      print('Email : $email');
+      print('Password : $password');
+    }
+  }
+
+  void postLogin() {
+    var url = "http://192.168.43.54:8000/login_user";
+    var body = json.encode({
+      "email": '$email',
+      "password": '$password',
+    });
+
+    http.post(url, body: body, headers: {
+      "content-type": "application/json",
+      "accept": "application/json",
+    }).then((response) {
+      print("Response status: ${response.statusCode}");
+
+      Map extractdata = json.decode(response.body);
+      //print(extractdata);
+      storage.setItem('user_bitponic', (extractdata));
+      var apps = storage.getItem('user_bitponic');
+      print(apps);
+      if (extractdata['access_token'] != null) {
+        //print(extractdata['access_token']);
+        //this.home();
+      } else if (extractdata['error'] != null) {
+        //print(extractdata['error']);
+        showDialog(
+            context: context,
+            builder: (context) {
+              return new SimpleDialog(children: <Widget>[
+                new Center(
+                    child: new Container(
+                        child: new Text('Email/Password tidak sesuai!!')))
+              ]);
+            });
+      }
     });
   }
 
@@ -147,10 +197,9 @@ class _LoginState extends State<Login> with Validation {
                         TextFormField(
                           obscureText: true,
                           decoration: InputDecoration(
-                            hintText: "Password",
-                            hintStyle:
-                                TextStyle(color: Colors.grey, fontSize: 12.0)
-                          ),
+                              hintText: "Password",
+                              hintStyle: TextStyle(
+                                  color: Colors.grey, fontSize: 12.0)),
                           validator: validatePassword,
                           onSaved: (String value) {
                             password = value;
@@ -199,13 +248,7 @@ class _LoginState extends State<Login> with Validation {
                         child: Material(
                           color: Colors.transparent,
                           child: InkWell(
-                            onTap: () {
-                              if (formKey.currentState.validate()) {
-                                formKey.currentState.save();
-                                print('Email: $email');
-                                print('Password: $password');
-                              }
-                            },
+                            onTap: this.submit,
                             child: Center(
                               child: Text("MASUK",
                                   style: TextStyle(
