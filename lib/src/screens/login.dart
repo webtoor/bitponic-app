@@ -1,22 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 //import 'package:bitponic/src/widgets/form_card.dart';
-import 'package:bitponic/src/validation/login_validation.dart';
-import 'package:localstorage/localstorage.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+//import 'package:bitponic/src/validators/login_validator.dart';
+//import 'package:bitponic/src/screens/dashboard.dart';
+//import 'package:localstorage/localstorage.dart';
+//import 'package:http/http.dart' as http;
+//import 'dart:convert';
+import 'package:bitponic/src/blocs/login_bloc.dart';
+
+final bloc = Bloc();
 
 class Login extends StatefulWidget {
   @override
   _LoginState createState() => _LoginState();
 }
 
-class _LoginState extends State<Login> with Validation {
+class _LoginState extends State<Login> {
   bool _isSelected = false;
-  final LocalStorage storage = new LocalStorage('user_app');
-  final formKey = GlobalKey<FormState>();
+  //final LocalStorage storage = new LocalStorage('user_app');
+  //final formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldkey = new GlobalKey<ScaffoldState>();
-
 
   String email = '';
   String password = '';
@@ -27,7 +30,7 @@ class _LoginState extends State<Login> with Validation {
     });
   }
 
-  void submit() {
+  /* void submit() {
     if (this.formKey.currentState.validate()) {
       formKey.currentState.save();
 
@@ -35,19 +38,24 @@ class _LoginState extends State<Login> with Validation {
       print('Email : $email');
       print('Password : $password'); */
 
-      this.postLogin();
-
+      //this.postLogin();
+      dashboardPage();
     }
-  }
+  } */
 
-  void postLogin() {
+  /*void dashboardPage() {
+    Navigator.pushReplacement(context,
+        MaterialPageRoute(builder: (BuildContext context) => Dashboard()));
+  } */
+
+  /*Future postLogin() async {
     var url = "http://192.168.1.4:8000/api/v1/login";
     var body = json.encode({
       "email": '$email',
       "password": '$password',
     });
 
-    http.post(url, body: body, headers: {
+    await http.post(url, body: body, headers: {
       "content-type": "application/json",
       "accept": "application/json",
     }).then((response) {
@@ -60,19 +68,21 @@ class _LoginState extends State<Login> with Validation {
       print(apps);
       if (extractdata['access_token'] != null) {
         //print(extractdata['access_token']);
-        //this.home();
+        dashboardPage();
       } else if (extractdata['error'] != null) {
         //print(extractdata['error']);
-          showSnackBar();
+        showSnackBar();
       }
     });
-  }
+  } */
 
-   void showSnackBar() {
+  void showSnackBar() {
     final snackBarContent = SnackBar(
-      content: Text('Anda memasukkan Username/Email dan Password yang salah. Isi dengan data yang benar dan coba lagi'),
+      content: Text(
+          'Anda memasukkan Username/Email dan Password yang salah. Isi dengan data yang benar dan coba lagi'),
       action: SnackBarAction(
-          label: 'OK', onPressed: _scaffoldkey.currentState.hideCurrentSnackBar),
+          label: 'OK',
+          onPressed: _scaffoldkey.currentState.hideCurrentSnackBar),
     );
     _scaffoldkey.currentState.showSnackBar(snackBarContent);
   }
@@ -102,14 +112,14 @@ class _LoginState extends State<Login> with Validation {
           color: Colors.black26.withOpacity(.2),
         ),
       );
-      
+
   @override
   Widget build(BuildContext context) {
     ScreenUtil.instance = ScreenUtil.getInstance()..init(context);
     ScreenUtil.instance =
         ScreenUtil(width: 750, height: 1334, allowFontScaling: true);
     return new Scaffold(
-      key : _scaffoldkey,
+      key: _scaffoldkey,
       backgroundColor: Colors.white,
       resizeToAvoidBottomPadding: true,
       body: Stack(fit: StackFit.expand, children: <Widget>[
@@ -165,7 +175,7 @@ class _LoginState extends State<Login> with Validation {
                           blurRadius: 10.0),
                     ]),
                 child: Form(
-                  key: formKey,
+                  //key: formKey,
                   child: Padding(
                     padding:
                         EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
@@ -184,17 +194,20 @@ class _LoginState extends State<Login> with Validation {
                             style: TextStyle(
                                 fontFamily: "Poppins-Medium",
                                 fontSize: ScreenUtil.getInstance().setSp(26))),
-                        TextFormField(
-                          keyboardType: TextInputType.emailAddress,
-                          decoration: InputDecoration(
-                              hintText: "Email",
-                              hintStyle: TextStyle(
-                                  color: Colors.grey, fontSize: 12.0)),
-                          validator: validateEmail,
-                          onSaved: (String value) {
-                            email = value;
-                          },
-                        ),
+                        StreamBuilder(
+                            stream: bloc.email,
+                            builder: (context, snapshot) {
+                              return TextField(
+                                onChanged: bloc.changeEmail,
+                                keyboardType: TextInputType.emailAddress,
+                                decoration: InputDecoration(
+                                  hintText: "Email",
+                                  hintStyle: TextStyle(
+                                      color: Colors.grey, fontSize: 12.0),
+                                  errorText: snapshot.error,
+                                ),
+                              );
+                            }),
                         SizedBox(
                           height: ScreenUtil.getInstance().setHeight(30),
                         ),
@@ -202,15 +215,18 @@ class _LoginState extends State<Login> with Validation {
                             style: TextStyle(
                                 fontFamily: "Poppins-Medium",
                                 fontSize: ScreenUtil.getInstance().setSp(26))),
-                        TextFormField(
-                          obscureText: true,
-                          decoration: InputDecoration(
-                              hintText: "Password",
-                              hintStyle: TextStyle(
-                                  color: Colors.grey, fontSize: 12.0)),
-                          validator: validatePassword,
-                          onSaved: (String value) {
-                            password = value;
+                        StreamBuilder(
+                          stream: bloc.password,
+                          builder: (context, snapshot) {
+                            return TextField(
+                              onChanged: bloc.changePassword,
+                              decoration: InputDecoration(
+                                hintText: 'Password',
+                                hintStyle: TextStyle(
+                                    color: Colors.grey, fontSize: 12.0),
+                                errorText: snapshot.error,
+                              ),
+                            );
                           },
                         ),
                       ],
@@ -239,36 +255,43 @@ class _LoginState extends State<Login> with Validation {
                                 fontSize: 12, fontFamily: "Poppins-Medium"))
                       ],
                     ),
-                    InkWell(
-                      child: Container(
-                        width: ScreenUtil.getInstance().setWidth(330),
-                        height: ScreenUtil.getInstance().setHeight(100),
-                        decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                                colors: [Color(0xFF17ead9), Color(0xFF6078ea)]),
-                            borderRadius: BorderRadius.circular(6.0),
-                            boxShadow: [
-                              BoxShadow(
-                                  color: Color(0xFF6078ea).withOpacity(.3),
-                                  offset: Offset(0.0, 8.0),
-                                  blurRadius: 8.0)
-                            ]),
-                        child: Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                            onTap: this.submit,
-                            child: Center(
-                              child: Text("MASUK",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontFamily: "Poppins-Bold",
-                                      fontSize: 18,
-                                      letterSpacing: 1.0)),
+                    StreamBuilder(
+                        stream: bloc.submitValid,
+                        builder: (context, snapshot) {
+                          return InkWell(
+                            child: Container(
+                              width: ScreenUtil.getInstance().setWidth(330),
+                              height: ScreenUtil.getInstance().setHeight(100),
+                              decoration: BoxDecoration(
+                                  gradient: LinearGradient(colors: [
+                                    Color(0xFF17ead9),
+                                    Color(0xFF6078ea)
+                                  ]),
+                                  borderRadius: BorderRadius.circular(6.0),
+                                  boxShadow: [
+                                    BoxShadow(
+                                        color:
+                                            Color(0xFF6078ea).withOpacity(.3),
+                                        offset: Offset(0.0, 8.0),
+                                        blurRadius: 8.0)
+                                  ]),
+                              child: Material(
+                                color: Colors.transparent,
+                                child: InkWell(
+                                  onTap: snapshot.hasData ? bloc.submit : null,
+                                  child: Center(
+                                    child: Text("MASUK",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontFamily: "Poppins-Bold",
+                                            fontSize: 18,
+                                            letterSpacing: 1.0)),
+                                  ),
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
-                      ),
-                    )
+                          );
+                        }),
                   ])
             ]),
           ),

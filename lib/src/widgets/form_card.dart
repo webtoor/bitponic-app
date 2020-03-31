@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
+/* import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:bitponic/src/validation/login_validation.dart';
+import 'package:bitponic/src/validator/login_validator.dart';
 
 class FormCard extends StatefulWidget {
   @override
@@ -100,3 +100,4 @@ class _FormCardState extends State<FormCard> with Validation {
     );
   }
 }
+*/
