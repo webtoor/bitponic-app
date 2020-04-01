@@ -20,7 +20,7 @@ import 'dart:async';
 class Validators {
   final validateEmail =
       StreamTransformer<String, String>.fromHandlers(handleData: (email, sink) {
-    if (email.contains('@')) {
+    if ((email.contains('@')) && (email != null)) {
       sink.add(email);
     } else {
       sink.addError('Format email tidak valid');
@@ -29,7 +29,7 @@ class Validators {
 
   final validatePassword =
       StreamTransformer<String, String>.fromHandlers(handleData: (password, sink) {
-    if (password.length > 3) {
+    if ((password.length > 3) && (password != null)) {
       sink.add(password);
     } else {
       sink.addError('Password minimal 4 karakter');

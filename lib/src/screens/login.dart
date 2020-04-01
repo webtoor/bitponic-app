@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-//import 'package:bitponic/src/widgets/form_card.dart';
-//import 'package:bitponic/src/validators/login_validator.dart';
-//import 'package:bitponic/src/screens/dashboard.dart';
-//import 'package:localstorage/localstorage.dart';
-//import 'package:http/http.dart' as http;
-//import 'dart:convert';
-import 'package:bitponic/src/blocs/login_bloc.dart';
+//import 'package:fluttertoast/fluttertoast.dart';
+import 'package:petanic/src/screens/dashboard.dart';
+import 'package:petanic/src/blocs/auth_bloc.dart';
+import 'package:petanic/src/models/auth_response.dart';
 
-final bloc = Bloc();
+final bloc = AuthBloc();
 
 class Login extends StatefulWidget {
   @override
@@ -19,7 +16,7 @@ class _LoginState extends State<Login> {
   bool _isSelected = false;
   //final LocalStorage storage = new LocalStorage('user_app');
   //final formKey = GlobalKey<FormState>();
-  final GlobalKey<ScaffoldState> _scaffoldkey = new GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   String email = '';
   String password = '';
@@ -29,6 +26,7 @@ class _LoginState extends State<Login> {
       _isSelected = !_isSelected;
     });
   }
+
 
   /* void submit() {
     if (this.formKey.currentState.validate()) {
@@ -43,10 +41,10 @@ class _LoginState extends State<Login> {
     }
   } */
 
-  /*void dashboardPage() {
+  void dashboardPage() {
     Navigator.pushReplacement(context,
         MaterialPageRoute(builder: (BuildContext context) => Dashboard()));
-  } */
+  }
 
   /*Future postLogin() async {
     var url = "http://192.168.1.4:8000/api/v1/login";
@@ -75,6 +73,16 @@ class _LoginState extends State<Login> {
       }
     });
   } */
+  void showInSnackBar(String value) {
+    _scaffoldKey.currentState
+        .showSnackBar(new SnackBar(content: new Text(value)));
+  }
+
+   void showErrorMessage(String message){
+    _scaffoldKey.currentState.showSnackBar(SnackBar(
+      content: Text(message),
+    ));
+  }
 
   void showSnackBar() {
     final snackBarContent = SnackBar(
@@ -82,9 +90,9 @@ class _LoginState extends State<Login> {
           'Anda memasukkan Username/Email dan Password yang salah. Isi dengan data yang benar dan coba lagi'),
       action: SnackBarAction(
           label: 'OK',
-          onPressed: _scaffoldkey.currentState.hideCurrentSnackBar),
+          onPressed: _scaffoldKey.currentState.hideCurrentSnackBar),
     );
-    _scaffoldkey.currentState.showSnackBar(snackBarContent);
+    _scaffoldKey.currentState.showSnackBar(snackBarContent);
   }
 
   Widget radioButton(bool isSelected) => Container(
@@ -112,6 +120,46 @@ class _LoginState extends State<Login> {
           color: Colors.black26.withOpacity(.2),
         ),
       );
+  // Loading Widget
+  Widget _buildLoadingWidget() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text("Loading data from API...", textDirection: TextDirection.ltr),
+          CircularProgressIndicator()
+        ],
+      ),
+    );
+  }
+
+  Widget message() {
+    return StreamBuilder<LoginState>(
+      stream: bloc.loginStateStream,
+      builder: (context, AsyncSnapshot<LoginState> snapshot) {
+      
+        if (!snapshot.hasData) return Container();
+
+        switch (snapshot.data.status) {
+          case LoginStatus.LOGGING:
+            return _buildLoadingWidget();
+
+          case LoginStatus.LOGIN_ERROR:
+            WidgetsBinding.instance.addPostFrameCallback((_) => showSnackBar());
+            return Container();
+
+          case LoginStatus.LOGIN_SUCCESS:
+            // Here you can go to another screen after login success.
+            WidgetsBinding.instance.addPostFrameCallback((_) => dashboardPage());
+            return Container();
+
+          case LoginStatus.NON_LOGIN:
+          default:
+            return Container();
+        }
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -119,7 +167,7 @@ class _LoginState extends State<Login> {
     ScreenUtil.instance =
         ScreenUtil(width: 750, height: 1334, allowFontScaling: true);
     return new Scaffold(
-      key: _scaffoldkey,
+      key: _scaffoldKey,
       backgroundColor: Colors.white,
       resizeToAvoidBottomPadding: true,
       body: Stack(fit: StackFit.expand, children: <Widget>[
@@ -147,7 +195,7 @@ class _LoginState extends State<Login> {
                     width: ScreenUtil.getInstance().setWidth(110),
                     height: ScreenUtil.getInstance().setHeight(110),
                   ),
-                  Text("bitponic",
+                  Text("petanic",
                       style: TextStyle(
                           fontFamily: "Poppins-Bold",
                           fontSize: ScreenUtil.getInstance().setSp(46),
@@ -295,8 +343,12 @@ class _LoginState extends State<Login> {
                   ])
             ]),
           ),
+          
         ),
-      ]),
+                message()
+
+      ])
+      ,
     );
   }
 }
