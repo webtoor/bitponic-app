@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 //import 'package:fluttertoast/fluttertoast.dart';
-import 'package:petanic/src/screens/dashboard.dart';
-import 'package:petanic/src/blocs/auth_bloc.dart';
-import 'package:petanic/src/models/auth_response.dart';
+import 'package:bitponic/src/screens/dashboard.dart';
+import 'package:bitponic/src/blocs/auth_bloc.dart';
+import 'package:bitponic/src/models/auth_response.dart';
 
 final bloc = AuthBloc();
 
@@ -195,7 +195,7 @@ class _LoginState extends State<Login> {
                     width: ScreenUtil.getInstance().setWidth(110),
                     height: ScreenUtil.getInstance().setHeight(110),
                   ),
-                  Text("petanic",
+                  Text("bitponic",
                       style: TextStyle(
                           fontFamily: "Poppins-Bold",
                           fontSize: ScreenUtil.getInstance().setSp(46),

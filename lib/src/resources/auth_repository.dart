@@ -1,4 +1,4 @@
-import 'package:petanic/src/resources/api_provider.dart';
+import 'package:bitponic/src/resources/api_provider.dart';
 
 class Repository{
   final apiProvider = ApiProvider();

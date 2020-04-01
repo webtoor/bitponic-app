@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:petanic/src/app.dart';
+import 'package:bitponic/src/app.dart';
 
 void main(){
-  runApp(PetanicApp());
+  runApp(BitponicApp());
 }
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:petanic/src/screens/login.dart';
+import 'package:bitponic/src/screens/login.dart';
     
-class PetanicApp extends StatelessWidget {
+class BitponicApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

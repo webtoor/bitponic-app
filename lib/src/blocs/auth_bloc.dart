@@ -1,8 +1,8 @@
 import 'dart:async';
-import 'package:petanic/src/validators/login_validator.dart';
+import 'package:bitponic/src/validators/login_validator.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:petanic/src/resources/auth_repository.dart';
-import 'package:petanic/src/models/auth_response.dart';
+import 'package:bitponic/src/resources/auth_repository.dart';
+import 'package:bitponic/src/models/auth_response.dart';
 
 class AuthBloc extends Object with Validators {
   final _repository = Repository();
@@ -28,7 +28,10 @@ class AuthBloc extends Object with Validators {
 
     print('Email is $validEmail');
     print('Password is $validPassword');
-    login(validEmail, validPassword);
+      changeLoginState(
+          state: LoginState(
+              status: LoginStatus.LOGIN_SUCCESS));
+    //login(validEmail, validPassword);
   }
 
   login(email, password) async {
