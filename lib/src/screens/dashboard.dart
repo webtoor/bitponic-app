@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'griddashboard.dart';
+
 class Dashboard extends StatefulWidget {
   @override
   DashboardState createState() => new DashboardState();
 }
-class DashboardState extends State<Dashboard> {
-  
 
-    @override
+class DashboardState extends State<Dashboard> {
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
@@ -60,7 +60,7 @@ class DashboardState extends State<Dashboard> {
           SizedBox(
             height: 40,
           ),
-         GridDashboard()
+          GridDashboard()
         ],
       ),
     );
@@ -76,13 +76,9 @@ Card buildCard(IconData iconData, String text) {
         Text(
           text,
           style: GoogleFonts.openSans(
-              textStyle: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold)),
+              textStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
         ),
       ],
     ),
   );
 }
-
-
