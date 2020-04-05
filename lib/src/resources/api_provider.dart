@@ -32,12 +32,12 @@ class ApiProvider {
   }
 
 
-   Future<List<UserProject>> fetchUserProject() async {
-    print('panggil data');
-    final response = await client.get(_url);
+   Future<List<UserProject>> getUserProject() async {
+    //print('panggil data');
+    final response = await client.get("$_url/user-project");
     if (response.statusCode == 200) {
-      // print(response.body.length);
-      return compute(userProjectFromJson, response.body);
+      print(response.body);
+      //return compute(userProjectFromJson, response.body);
 
       // return ItemModel.fromJson(json.decode(response.body));
     } else {
