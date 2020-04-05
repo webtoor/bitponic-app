@@ -1,3 +1,5 @@
+import 'package:bitponic/src/models/user_project.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' show Client;
 import 'dart:convert';
 
@@ -27,6 +29,20 @@ class ApiProvider {
     }else{
       return false;
     } 
+  }
+
+
+   Future<List<UserProject>> fetchUserProject() async {
+    print('panggil data');
+    final response = await client.get(_url);
+    if (response.statusCode == 200) {
+      // print(response.body.length);
+      return compute(userProjectFromJson, response.body);
+
+      // return ItemModel.fromJson(json.decode(response.body));
+    } else {
+      throw Exception('Failed to Load');
+    }
   }
 
 }
