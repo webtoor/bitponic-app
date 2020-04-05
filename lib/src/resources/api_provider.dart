@@ -10,7 +10,6 @@ class ApiProvider {
       "email": email,
       "password": password,
     });
-
     //print(body);
 
     final response = await client.post("$_url/login", body: body, headers: {
@@ -29,4 +28,5 @@ class ApiProvider {
       return false;
     } 
   }
+
 }
