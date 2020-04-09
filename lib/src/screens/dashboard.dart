@@ -30,13 +30,13 @@ Future<UserProject> getUserProject() async {
 }
 
 class DashboardState extends State<Dashboard> {
-  Future<UserProject> futureAlbum;
+  Future<UserProject> futureUserProject;
 
   @override
   void initState() {
     /*  bloc.getUserProject(); */
     super.initState();
-    futureAlbum = getUserProject();
+    futureUserProject = getUserProject();
   }
 
   @override
@@ -56,45 +56,11 @@ class DashboardState extends State<Dashboard> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    FutureBuilder<UserProject>(
-                      future: futureAlbum,
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          return Text(
-                            snapshot.data.projectName,
-                            style: GoogleFonts.openSans(
-                                textStyle: TextStyle(
-                                    color: Colors.blue,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold)),
-                          );
-                        } else if (snapshot.hasError) {
-                          return Text("${snapshot.error}");
-                        }
-                        return CircularProgressIndicator();
-                      },
-                    ),
+                    projectName(futureUserProject),
                     SizedBox(
                       height: 4,
                     ),
-                    FutureBuilder<UserProject>(
-                      future: futureAlbum,
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          return Text(
-                            snapshot.data.projectType,
-                            style: GoogleFonts.openSans(
-                                textStyle: TextStyle(
-                                    color: Color(0xffa29aac),
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600)),
-                          );
-                        } else if (snapshot.hasError) {
-                          return Text("${snapshot.error}");
-                        }
-                        return CircularProgressIndicator();
-                      },
-                    ),
+                    projectType(futureUserProject)
                   ],
                 ),
                 IconButton(
@@ -111,6 +77,7 @@ class DashboardState extends State<Dashboard> {
           SizedBox(
             height: 40,
           ),
+          Text('asdadsasd'),
           GridDashboard()
         ],
       ),
@@ -133,3 +100,46 @@ Card buildCard(IconData iconData, String text) {
     ),
   );
 }
+
+Widget projectName(futureUserProject) {
+  return FutureBuilder<UserProject>(
+    future: futureUserProject,
+    builder: (context, snapshot) {
+      if (snapshot.hasData) {
+        return Text(
+          snapshot.data.projectName,
+          style: GoogleFonts.openSans(
+              textStyle: TextStyle(
+                  color: Colors.blue,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold)),
+        );
+      } else if (snapshot.hasError) {
+        //return Text("${snapshot.error}");
+      }
+      return CircularProgressIndicator();
+    },
+  );
+}
+
+
+  Widget projectType(futureUserProject) {
+    return FutureBuilder<UserProject>(
+      future: futureUserProject,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return Text(
+            snapshot.data.projectType,
+            style: GoogleFonts.openSans(
+                textStyle: TextStyle(
+                    color: Color(0xffa29aac),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600)),
+          );
+        } else if (snapshot.hasError) {
+          //return Text("${snapshot.error}");
+        }
+        return CircularProgressIndicator();
+      },
+    );
+  }

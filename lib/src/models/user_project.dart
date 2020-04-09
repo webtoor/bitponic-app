@@ -10,17 +10,20 @@ class UserProject {
     int id;
     String projectName;
     String projectType;
+    List projectDevice;
 
     UserProject({
         this.id,
         this.projectName,
         this.projectType,
+        this.projectDevice,
     });
 
     factory UserProject.fromJson(Map<String, dynamic> json) => new UserProject(
         id: json["data"]["id"],
         projectName: json["data"]["project_name"],
         projectType: json["data"]["project"]["name"],
+        projectDevice :  json["data"]["project_device"]["id"]
     );
 
 }
