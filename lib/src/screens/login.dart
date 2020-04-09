@@ -27,7 +27,6 @@ class _LoginState extends State<Login> {
     });
   }
 
-
   /* void submit() {
     if (this.formKey.currentState.validate()) {
       formKey.currentState.save();
@@ -78,7 +77,7 @@ class _LoginState extends State<Login> {
         .showSnackBar(new SnackBar(content: new Text(value)));
   }
 
-   void showErrorMessage(String message){
+  void showErrorMessage(String message) {
     _scaffoldKey.currentState.showSnackBar(SnackBar(
       content: Text(message),
     ));
@@ -137,7 +136,6 @@ class _LoginState extends State<Login> {
     return StreamBuilder<LoginState>(
       stream: bloc.loginStateStream,
       builder: (context, AsyncSnapshot<LoginState> snapshot) {
-      
         if (!snapshot.hasData) return Container();
 
         switch (snapshot.data.status) {
@@ -150,7 +148,8 @@ class _LoginState extends State<Login> {
 
           case LoginStatus.LOGIN_SUCCESS:
             // Here you can go to another screen after login success.
-            WidgetsBinding.instance.addPostFrameCallback((_) => dashboardPage());
+            WidgetsBinding.instance
+                .addPostFrameCallback((_) => dashboardPage());
             return Container();
 
           case LoginStatus.NON_LOGIN:
@@ -242,20 +241,7 @@ class _LoginState extends State<Login> {
                             style: TextStyle(
                                 fontFamily: "Poppins-Medium",
                                 fontSize: ScreenUtil.getInstance().setSp(26))),
-                        StreamBuilder(
-                            stream: bloc.email,
-                            builder: (context, snapshot) {
-                              return TextField(
-                                onChanged: bloc.changeEmail,
-                                keyboardType: TextInputType.emailAddress,
-                                decoration: InputDecoration(
-                                  hintText: "Email",
-                                  hintStyle: TextStyle(
-                                      color: Colors.grey, fontSize: 12.0),
-                                  errorText: snapshot.error,
-                                ),
-                              );
-                            }),
+                        emailField(bloc),
                         SizedBox(
                           height: ScreenUtil.getInstance().setHeight(30),
                         ),
@@ -263,20 +249,7 @@ class _LoginState extends State<Login> {
                             style: TextStyle(
                                 fontFamily: "Poppins-Medium",
                                 fontSize: ScreenUtil.getInstance().setSp(26))),
-                        StreamBuilder(
-                          stream: bloc.password,
-                          builder: (context, snapshot) {
-                            return TextField(
-                              onChanged: bloc.changePassword,
-                              decoration: InputDecoration(
-                                hintText: 'Password',
-                                hintStyle: TextStyle(
-                                    color: Colors.grey, fontSize: 12.0),
-                                errorText: snapshot.error,
-                              ),
-                            );
-                          },
-                        ),
+                        passwordField(bloc),
                       ],
                     ),
                   ),
@@ -303,52 +276,83 @@ class _LoginState extends State<Login> {
                                 fontSize: 12, fontFamily: "Poppins-Medium"))
                       ],
                     ),
-                    StreamBuilder(
-                        stream: bloc.submitValid,
-                        builder: (context, snapshot) {
-                          return InkWell(
-                            child: Container(
-                              width: ScreenUtil.getInstance().setWidth(330),
-                              height: ScreenUtil.getInstance().setHeight(100),
-                              decoration: BoxDecoration(
-                                  gradient: LinearGradient(colors: [
-                                    Color(0xFF17ead9),
-                                    Color(0xFF6078ea)
-                                  ]),
-                                  borderRadius: BorderRadius.circular(6.0),
-                                  boxShadow: [
-                                    BoxShadow(
-                                        color:
-                                            Color(0xFF6078ea).withOpacity(.3),
-                                        offset: Offset(0.0, 8.0),
-                                        blurRadius: 8.0)
-                                  ]),
-                              child: Material(
-                                color: Colors.transparent,
-                                child: InkWell(
-                                  onTap: snapshot.hasData ? bloc.submit : null,
-                                  child: Center(
-                                    child: Text("MASUK",
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontFamily: "Poppins-Bold",
-                                            fontSize: 18,
-                                            letterSpacing: 1.0)),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          );
-                        }),
+                    submitField(bloc),
                   ])
             ]),
           ),
-          
         ),
-                message()
-
-      ])
-      ,
+        message()
+      ]),
     );
+  }
+
+  Widget emailField(bloc) {
+    return StreamBuilder(
+        stream: bloc.email,
+        builder: (context, snapshot) {
+          return TextField(
+            onChanged: bloc.changeEmail,
+            keyboardType: TextInputType.emailAddress,
+            decoration: InputDecoration(
+              hintText: "Email",
+              hintStyle: TextStyle(color: Colors.grey, fontSize: 12.0),
+              errorText: snapshot.error,
+            ),
+          );
+        });
+  }
+
+  Widget passwordField(bloc) {
+    return StreamBuilder(
+      stream: bloc.password,
+      builder: (context, snapshot) {
+        return TextField(
+          onChanged: bloc.changePassword,
+          obscureText: true,
+          decoration: InputDecoration(
+            hintText: 'Password',
+            hintStyle: TextStyle(color: Colors.grey, fontSize: 12.0),
+            errorText: snapshot.error,
+          ),
+        );
+      },
+    );
+  }
+
+  Widget submitField(bloc) {
+    return StreamBuilder(
+        stream: bloc.submitValid,
+        builder: (context, snapshot) {
+          return InkWell(
+            child: Container(
+              width: ScreenUtil.getInstance().setWidth(330),
+              height: ScreenUtil.getInstance().setHeight(100),
+              decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                      colors: [Color(0xFF17ead9), Color(0xFF6078ea)]),
+                  borderRadius: BorderRadius.circular(6.0),
+                  boxShadow: [
+                    BoxShadow(
+                        color: Color(0xFF6078ea).withOpacity(.3),
+                        offset: Offset(0.0, 8.0),
+                        blurRadius: 8.0)
+                  ]),
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: snapshot.hasData ? bloc.submit : null,
+                  child: Center(
+                    child: Text("MASUK",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontFamily: "Poppins-Bold",
+                            fontSize: 18,
+                            letterSpacing: 1.0)),
+                  ),
+                ),
+              ),
+            ),
+          );
+        });
   }
 }

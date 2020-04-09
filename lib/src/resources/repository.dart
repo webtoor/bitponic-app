@@ -5,6 +5,6 @@ class Repository{
   final apiProvider = ApiProvider();
 
   Future login(String email, password) => apiProvider.login(email, password);
-  Future<List<UserProject>> fetchUserProject() => apiProvider.getUserProject();
+  Future <UserProject> fetchUserProject() => apiProvider.getUserProject();
 
 }
