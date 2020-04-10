@@ -28,15 +28,18 @@ Future<UserProject> getUserProject() async {
   }
 }
 
-class DashboardState extends State<Dashboard> {
+class DashboardState extends State<Dashboard>
+    with SingleTickerProviderStateMixin {
   Future<UserProject> futureUserProject;
+  TabController tabController;
 
   @override
   void initState() {
     /*  bloc.getUserProject(); */
     super.initState();
     futureUserProject = getUserProject();
-    print(UserProject);
+    print(getUserProject());
+    tabController = TabController(vsync: this, length: 4);
   }
 
   @override
@@ -75,9 +78,60 @@ class DashboardState extends State<Dashboard> {
             ),
           ),
           SizedBox(
-            height: 40,
+            height: 5,
           ),
-          Text('asdadsasd'),
+          //projectDevice(futureUserProject),
+          Padding(
+            padding: EdgeInsets.only(top: 10.0),
+            child: TabBar(
+              controller: tabController,
+              indicatorColor: Colors.transparent,
+              labelColor: Colors.black,
+              unselectedLabelColor: Colors.grey.withOpacity(0.6),
+              isScrollable: true,
+              tabs: <Widget>[
+                Tab(
+                  child: Text(
+                    'Device 1',
+                    style: TextStyle(
+                        fontSize: 17.0,
+                        fontFamily: 'Quicksand',
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+                Tab(
+                  child: Text(
+                    'Device 2',
+                    style: TextStyle(
+                        fontSize: 17.0,
+                        fontFamily: 'Quicksand',
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+                Tab(
+                  child: Text(
+                    'Device 3',
+                    style: TextStyle(
+                        fontSize: 17.0,
+                        fontFamily: 'Quicksand',
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+                Tab(
+                  child: Text(
+                    'Device 4',
+                    style: TextStyle(
+                        fontSize: 17.0,
+                        fontFamily: 'Quicksand',
+                        fontWeight: FontWeight.bold),
+                  ),
+                )
+              ],
+            ),
+          ),
+          SizedBox(
+            height: 20,
+          ),
           GridDashboard()
         ],
       ),
@@ -122,24 +176,44 @@ Widget projectName(futureUserProject) {
   );
 }
 
+Widget projectType(futureUserProject) {
+  return FutureBuilder<UserProject>(
+    future: futureUserProject,
+    builder: (context, snapshot) {
+      if (snapshot.hasData) {
+        return Text(
+          snapshot.data.projectType,
+          style: GoogleFonts.openSans(
+              textStyle: TextStyle(
+                  color: Color(0xffa29aac),
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600)),
+        );
+      } else if (snapshot.hasError) {
+        //return Text("${snapshot.error}");
+      }
+      return CircularProgressIndicator();
+    },
+  );
+}
 
-  Widget projectType(futureUserProject) {
-    return FutureBuilder<UserProject>(
-      future: futureUserProject,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          return Text(
-            snapshot.data.projectType,
-            style: GoogleFonts.openSans(
-                textStyle: TextStyle(
-                    color: Color(0xffa29aac),
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600)),
-          );
-        } else if (snapshot.hasError) {
-          //return Text("${snapshot.error}");
-        }
-        return CircularProgressIndicator();
-      },
-    );
-  }
+Widget projectDevice(futureUserProject) {
+  return FutureBuilder<UserProject>(
+    future: futureUserProject,
+    builder: (context, snapshot) {
+      if (snapshot.hasData) {
+        return Text(
+          snapshot.data.projectDevice.length.toString(),
+          style: GoogleFonts.openSans(
+              textStyle: TextStyle(
+                  color: Color(0xffa29aac),
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600)),
+        );
+      } else if (snapshot.hasError) {
+        //return Text("${snapshot.error}");
+      }
+      return CircularProgressIndicator();
+    },
+  );
+}

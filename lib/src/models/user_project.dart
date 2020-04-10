@@ -4,8 +4,6 @@ userProjectFromJson(String str) {
     return new List<UserProject>.from(jsonData.map((x) => UserProject.fromJson(x)));
 }  */
 
-import 'dart:convert';
-
 class UserProject {
   int id;
   String projectName;
@@ -21,15 +19,16 @@ class UserProject {
 
   factory UserProject.fromJson(Map<String, dynamic> parsedJson) {
     var list = parsedJson["data"]["project_device"] as List;
-    print(list);
+    //print(list);
     List<ProjectDevice> dataList =
         list.map((i) => ProjectDevice.fromJson(i)).toList();
 
     return UserProject(
-        id: parsedJson["data"]["id"],
-        projectName: parsedJson["data"]["project_name"],
-        projectType: parsedJson["data"]["project"]["name"],
-        projectDevice: dataList);
+      id: parsedJson["data"]["id"],
+      projectName: parsedJson["data"]["project_name"],
+      projectType: parsedJson["data"]["project"]["name"],
+      projectDevice: dataList,
+    );
   }
 }
 
